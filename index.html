@@ -199,14 +199,6 @@ ol, ul { list-style: none; }
 .frame .lbl { position: absolute; left: 10px; top: 10px; z-index: 2; font: 9.5px var(--mono); letter-spacing: .14em; color: var(--fg); background: var(--bg); padding: 3px 8px; }
 @media (max-width: 860px) { .frames { grid-template-columns: 1fr 1fr; row-gap: 28px; } }
 
-.split.wide > .a { grid-column: 1 / 5; }
-.split.wide > .b { grid-column: 6 / 13; }
-.split.top { align-items: start; }
-.frame { aspect-ratio: var(--fa, 3 / 4); }
-.inner2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); }
-.lead-link { color: var(--fg); border-bottom: 1px solid var(--faint); }
-@media (max-width: 860px) { .split.wide > .a, .split.wide > .b { grid-column: 1 / -1; } .split.wide > .b { margin-top: 20px; } }
-
 /* ============================================================
    ArtStudio（暖纸底）
    ============================================================ */
@@ -421,14 +413,177 @@ dialog[open] { display: grid; grid-template-rows: 1fr auto; }
 /* 段落里的小注 */
 .t-story .note { font-size: 12.5px; color: var(--faint); }
 
+/* ============================================================
+   v7 版式规则（覆盖 p1/p2/p3）
+   1. 两条对齐线：页面左边线（侧栏标签、整行媒体）+ 正文线（第 4 栏起：标题、正文）
+   2. 三级字：宋体标题 / 黑体正文（中灰）/ 小号标签（浅灰）
+   3. 靛蓝只标两类东西：章节与条目编号，以及「我」做的那几步
+   ============================================================ */
+:root { --body: 14.5px; }
+body { font-size: var(--body); }
+
+/* ---------- 通用两栏：侧栏 1-3 栏，正文 4-12 栏 ---------- */
+.blk { display: grid; grid-template-columns: repeat(12, 1fr); gap: 0 var(--gap); }
+.blk > .k { grid-column: 1 / 4; }
+.blk > .v { grid-column: 4 / 13; min-width: 0; }
+.blk + .blk { margin-top: clamp(56px, 7vw, 96px); }
+.lab { display: block; font-size: 12px; line-height: 1.8; color: var(--faint); letter-spacing: .04em; }
+.num { display: block; font: 11px/1.8 var(--mono); letter-spacing: .12em; color: var(--accent); }
+.prose { color: var(--dim); max-width: 36em; }
+.prose + .prose { margin-top: 12px; }
+.prose b { color: var(--fg); font-weight: 500; }
+.prose a { color: var(--fg); border-bottom: 1px solid var(--accent); }
+.h3 { font-family: var(--serif); font-weight: 400; font-size: clamp(22px, 2.2vw, 30px); line-height: 1.35; margin-bottom: 12px; }
+.h4s { font-family: var(--serif); font-weight: 400; font-size: 19px; line-height: 1.45; margin-bottom: 6px; }
+@media (max-width: 860px) {
+  .blk > .k, .blk > .v { grid-column: 1 / -1; }
+  .blk > .k { margin-bottom: 10px; display: flex; gap: 14px; align-items: baseline; flex-wrap: wrap; }
+}
+
+/* ---------- 章节头：编号与标题同字号、同基线 ---------- */
+.chap { display: grid; grid-template-columns: repeat(12, 1fr); gap: 0 var(--gap); align-items: baseline;
+  border-top: 1px solid var(--line); padding-top: clamp(20px, 2.4vw, 32px); margin-bottom: clamp(56px, 8vw, 112px); }
+.chap .cn { grid-column: 1 / 4; font-family: var(--serif); font-weight: 400; color: var(--accent);
+  font-size: clamp(40px, 5.2vw, 76px); line-height: 1.1; }
+.chap .v { grid-column: 4 / 13; }
+.chap h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(40px, 5.2vw, 76px); line-height: 1.1; letter-spacing: .02em; }
+.chap p { margin-top: 18px; color: var(--dim); max-width: 34em; }
+.chap p a { color: var(--fg); border-bottom: 1px solid var(--accent); }
+@media (max-width: 860px) { .chap .cn { grid-column: 1 / 3; } .chap .v { grid-column: 3 / 13; } }
+
+/* ---------- 首屏 ---------- */
+.hero-body { align-items: center; }
+.hero-copy { grid-column: 1 / 8; align-self: center; }
+.hero h1 { font-family: var(--serif); font-weight: 400; letter-spacing: .06em; font-size: clamp(72px, 10.5vw, 160px); line-height: 1; }
+.hero .role { margin-top: clamp(22px, 3vh, 36px); font-size: clamp(16px, 1.5vw, 20px); color: var(--accent); letter-spacing: .04em; }
+.hero-lead { margin-top: 14px; max-width: 28em; font-size: clamp(14.5px, 1.25vw, 16px); color: var(--dim); font-weight: 400; }
+.hero-fig { grid-column: 9 / 13; justify-self: end; width: 100%; max-width: calc(min(70svh, 680px) * .5625); }
+.hero-fig figcaption { font-family: var(--sans); font-size: 12px; }
+.facts dt { font-family: var(--sans); font-size: 12px; letter-spacing: .04em; color: var(--faint); }
+.facts dd { color: var(--dim); }
+.facts dd b { font-family: var(--serif); font-weight: 400; font-size: clamp(20px, 1.9vw, 26px); }
+@media (max-width: 860px) {
+  .hero-copy, .hero-fig { grid-column: 1 / -1; }
+  .hero-fig { justify-self: start; max-width: 260px; margin-top: 32px; }
+  .hero h1 { font-size: clamp(64px, 19vw, 96px); }
+}
+
+/* ---------- 个人信息 ---------- */
+.irow { padding: 30px 0; }
+.ik { font-size: 12px; letter-spacing: .04em; color: var(--faint); font-family: var(--sans); }
+.iv { grid-column: 4 / 13; }
+.iv h3 { font-family: var(--serif); font-size: 20px; }
+.iv .where { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; }
+.duty2 { display: grid; grid-template-columns: 1fr 1fr; gap: 36px var(--gap); }
+.duty2 article { border-top: 1px solid var(--line); padding-top: 14px; }
+.duty2 article.core { border-top-color: var(--accent); }
+.duty2 h4 { font-family: var(--serif); font-weight: 400; font-size: 19px; margin-bottom: 8px; }
+.duty2 h4 small { font-family: var(--sans); font-size: 12px; color: var(--accent); margin-left: 10px; }
+.duty2 li { font-size: 13.5px; line-height: 1.9; color: var(--dim); }
+.tl2 li { padding: 20px 0; border-top: 1px solid var(--line); }
+.tl2 li:last-child { border-bottom: 1px solid var(--line); }
+.tl2 .yr { font: 11px/1.8 var(--mono); letter-spacing: .08em; color: var(--faint); }
+.tl2 h3 { font-family: var(--serif); font-weight: 400; font-size: 18px; display: inline; }
+.tl2 .role { margin-left: 12px; font-size: 12px; color: var(--faint); }
+.tl2 p { margin-top: 4px; color: var(--dim); max-width: 36em; font-size: 13.5px; }
+@media (max-width: 620px) { .duty2 { grid-template-columns: 1fr; } }
+
+/* ---------- 作品条目 ---------- */
+.item + .item { margin-top: clamp(88px, 11vw, 160px); }
+.item > .blk { margin-bottom: clamp(28px, 3.6vw, 48px); }
+.item .row + .row { margin-top: clamp(20px, 2.6vw, 36px); }
+.fig figcaption { font-size: 12.5px; }
+.fig figcaption span { font-family: var(--sans); font-size: 12px; letter-spacing: .02em; text-transform: none; }
+
+/* TA 主展：媒体在正文栏里，标题在媒体下 */
+.feat .fig figcaption { display: none; }
+.feat .cap { margin-top: 18px; }
+
+/* 其余工具：固定卡片，不再悬停浮出 */
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px var(--gap); align-items: start; }
+.card { text-align: left; display: block; width: 100%; }
+.card .frame { aspect-ratio: 16 / 10; }
+.card .frame .pl { left: 12px; bottom: 12px; width: 30px; height: 30px; }
+.card .h4s { margin-top: 14px; font-size: 17px; }
+.card p { font-size: 13px; color: var(--dim); line-height: 1.8; }
+.card .tg { font-size: 12px; color: var(--faint); }
+@media (max-width: 1020px) { .cards { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .cards { grid-template-columns: 1fr; } }
+
+/* ---------- ArtStudio ---------- */
+.as-lead2 { font-family: var(--serif); font-size: clamp(24px, 2.8vw, 38px); line-height: 1.55; font-weight: 400; max-width: 20em; }
+.as-lead2 em { font-style: normal; color: var(--accent); }
+.who2 { display: inline-block; margin-top: 8px; font-size: 12px; line-height: 1; padding: 5px 10px 4px; border-radius: 999px;
+  border: 1px solid var(--line); color: var(--dim); }
+.who2.me { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.st { border-top: 1px solid var(--line); padding-top: clamp(24px, 3vw, 36px); }
+.blk.st + .blk.st { margin-top: clamp(48px, 6vw, 80px); }
+.st .h3 { margin-bottom: 10px; }
+.st .mat { margin-top: clamp(22px, 2.8vw, 36px); }
+.two { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: var(--gap); align-items: start; }
+.two .frame { aspect-ratio: 9 / 16; }
+.frames.pair { max-width: 640px; }
+.kv { border-top: 1px solid var(--line); }
+.kv div { display: grid; grid-template-columns: 7.5em 1fr; gap: var(--gap); padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 13.5px; line-height: 1.75; }
+.kv dt { color: var(--faint); }
+.kv dd { color: var(--fg); }
+.kv dd small { display: block; color: var(--faint); font-size: 12px; }
+.code { font: 12px/1.85 var(--mono); color: var(--dim); background: var(--mat); padding: 16px 18px; white-space: pre-wrap; word-break: break-word; }
+.code b { color: var(--fg); font-weight: 400; }
+.plist { margin-top: 14px; }
+.plist li { display: grid; grid-template-columns: 3.2em minmax(0, 1fr) minmax(0, 13em); gap: var(--gap); padding: 12px 0; border-bottom: 1px solid var(--line); align-items: baseline; }
+.plist li:first-child { border-top: 1px solid var(--line); }
+.plist .n { font: 11px var(--mono); color: var(--faint); }
+.plist .en { font: 12px/1.75 var(--mono); color: var(--dim); }
+.plist .zh { font-size: 13px; color: var(--fg); }
+.plist li.pick .n, .plist li.pick .zh { color: var(--accent); }
+.loop2 { margin-top: 18px; font-size: 13.5px; color: var(--dim); display: flex; gap: 12px; align-items: baseline; }
+.loop2::before { content: "↺"; color: var(--accent); }
+.sheet .m { cursor: zoom-in; }
+@media (max-width: 860px) {
+  .two { grid-template-columns: 1fr 1fr; }
+  .plist li { grid-template-columns: 2.6em 1fr; }
+  .plist .zh { grid-column: 2; }
+}
+@media (max-width: 560px) { .two { grid-template-columns: 1fr; } .two .frame { max-width: 260px; } }
+
+/* 页脚标签改中文小字 */
+.f-grid .lab { margin-bottom: 6px; }
+.footer .big { font-family: var(--serif); font-weight: 400; letter-spacing: .06em; }
+.nav-links { font-family: var(--sans); font-size: 12px; letter-spacing: .04em; }
+.brand { font-family: var(--serif); font-weight: 400; font-size: 15px; }
+.brand span { font-family: var(--sans); font-size: 11px; letter-spacing: .04em; }
+
+/* ArtStudio 精简版：三个想法 */
+.ideas { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gap); }
+.ideas li { border-top: 1px solid var(--line); padding-top: 18px; }
+.ideas .h4s { margin: 10px 0 10px; font-size: 19px; }
+.ideas .h4s em { font-style: normal; color: var(--accent); }
+.ideas p { font-size: 13.5px; line-height: 1.9; color: var(--dim); }
+@media (max-width: 860px) { .ideas { grid-template-columns: 1fr; row-gap: 32px; } }
+
+/* 手机竖屏：导航不溢出、点击区域够大、小字放到 12px */
+@media (max-width: 560px) {
+  .nav { padding-top: 2px; padding-bottom: 2px; }
+  .nav-links a { padding: 13px 0; }
+  .nav-links a::after { bottom: 9px; }
+  .f-grid a, .f-grid span.v { padding: 6px 0; line-height: 1.6; }
+  .num, .lab, .tl2 .yr, .iv .where, .plist .n, .path, .idx-row .tg, .fig figcaption span, .mono, .card .tg { font-size: 12px; }
+  .fig figcaption { font-size: 13px; }
+}
+@media (max-width: 480px) {
+  .brand { display: none; }
+  .nav-links { margin-left: 0; width: 100%; justify-content: space-between; gap: 0; font-size: 12.5px; letter-spacing: 0; }
+}
+
 </style>
 </head>
 <body>
 
 <header class="nav tone-dark" id="nav">
-  <a class="brand" href="#top">张仁杰<span>TECHNICAL ARTIST</span></a>
+  <a class="brand" href="#top">张仁杰<span>技术美术</span></a>
   <nav class="nav-links" id="navLinks" aria-label="主导航">
-    <a href="#info">个人信息</a><a href="#ta">TA 作品</a><a href="#works">个人作品</a><a href="#artstudio">ARTSTUDIO</a><a href="#more">其他</a><a href="#contact">联系</a>
+    <a href="#info">个人信息</a><a href="#ta">TA 作品</a><a href="#works">个人作品</a><a href="#artstudio">ArtStudio</a><a href="#more">其他</a><a href="#contact">联系</a>
   </nav>
 </header>
 <main>
@@ -437,152 +592,143 @@ dialog[open] { display: grid; grid-template-rows: 1fr auto; }
   <div class="wrap">
     <div class="hero-body">
       <div class="hero-copy">
-        <p class="eyebrow mono">TECHNICAL ARTIST · 技术美术</p>
         <h1>张仁杰</h1>
-        <p class="hero-lead">在腾讯光子做技术美术，现在是 TA 负责人。前几年主要做开放世界的 PCG 和场景工具，现在管渲染、美术规范和性能。下班后用 AI 出图，喜欢的就 3D 打印出来。</p>
+        <p class="role">技术美术 · UE5 单机项目 TA 负责人</p>
+        <p class="hero-lead">在腾讯光子做技术美术，现在负责一个 UE5 单机项目的美术技术。前几年主要做开放世界的 PCG 和场景工具。下班后用 AI 出图，喜欢的就 3D 打印出来。</p>
       </div>
       <figure class="hero-fig">
-        <button class="m" style="--w:1920;--h:1080" data-view data-kind="video" data-src="assets/resume/ascii-matrix.mp4" data-title="汉字 ASCII Matrix" data-desc="在 UE5 里做的字符雨，把字母换成了汉字，叠在城市夜景上。">
-          <img src="assets/resume/ascii-matrix.jpg" alt="汉字 ASCII Matrix" decoding="async"><i class="pl"></i>
+        <button class="m" style="--w:765;--h:1360" data-view data-kind="image" data-src="assets/resume/print-bloom-render.jpg" data-title="在身上生长" data-desc="用 ArtStudio 生成、挑中后打印出来的一件。生成过程见第肆章。">
+          <img src="assets/resume/print-bloom-render.jpg" alt="在身上生长" decoding="async">
         </button>
-        <figcaption><span>汉字 ASCII Matrix</span><span>UE5</span></figcaption>
+        <figcaption><span>在身上生长</span><span>AI 生成 → 3D 打印</span></figcaption>
       </figure>
     </div>
     <dl class="facts">
-      <div><dt class="mono">EXPERIENCE</dt><dd><b>5 年以上</b>Unreal Engine 项目</dd></div>
-      <div><dt class="mono">ROLE</dt><dd><b>TA 负责人</b>腾讯光子工作室群</dd></div>
-      <div><dt class="mono">EDUCATION</dt><dd><b>硕士</b>北京电影学院 · 数字电影技术</dd></div>
-      <div><dt class="mono">PROJECTS</dt><dd><b>4 个</b>参与过的项目</dd></div>
+      <div><dt>经验</dt><dd><b>5 年以上</b>Unreal Engine 项目</dd></div>
+      <div><dt>现在</dt><dd><b>项目 TA 负责人</b>腾讯光子 · UE5 单机项目</dd></div>
+      <div><dt>学历</dt><dd><b>硕士</b>北京电影学院 · 数字电影技术</dd></div>
+      <div><dt>项目</dt><dd><b>4 个</b>参与过的项目</dd></div>
     </dl>
   </div>
 </section>
 
 <section class="sec tone-paper" id="info" data-tone="paper">
   <div class="wrap">
-    <header class="chap rise"><span class="chap-num"><span class="cn">壹</span><span class="mono">ABOUT</span></span><h2 class="chap-title">个人信息</h2><p class="chap-note">读书、工作，和最近在研究的东西。</p></header>
+    <header class="chap rise"><span class="cn">壹</span><div class="v"><h2>个人信息</h2><p>读书、工作，和最近在研究的东西。</p></div></header>
 
-    <div class="irow rise"><div class="ik mono">EDUCATION</div><div class="iv">
-      <div class="entry"><h3>北京电影学院 · 数字电影技术 · 硕士</h3><div class="where mono">2018 — 2021</div>
+    <div class="irow rise"><div class="ik">教育</div><div class="iv">
+      <div class="entry"><h3>北京电影学院 · 数字电影技术 · 硕士</h3><div class="where">2018 — 2021</div>
         <p>研究方向是实时渲染和程序化生成。毕业后进了光子，一直做到现在。</p></div>
-      <div class="entry"><h3>上海大学 · 数字媒体艺术 · 本科</h3><div class="where mono">2014 — 2018</div>
+      <div class="entry"><h3>上海大学 · 数字媒体艺术 · 本科</h3><div class="where">2014 — 2018</div>
         <p>艺术和技术都学一点，后来做技术美术就是从这里开始的。</p></div></div></div>
 
-    <div class="irow rise"><div class="ik mono">EXPERIENCE</div><div class="iv">
-      <h3>腾讯光子工作室群 · 技术美术</h3><div class="where mono">2021 — 至今 · 现任 TA 负责人</div>
-      <p>前几年主要做 PCG 和场景工具，开放世界项目的 PCG 管线是从零搭起来的。近两年做 TA 负责人，渲染、材质、美术规范、场景工具和团队都要管。</p></div></div>
+    <div class="irow rise"><div class="ik">工作</div><div class="iv">
+      <h3>腾讯光子工作室群 · 技术美术</h3><div class="where">2021 — 至今</div>
+      <p>前几年主要做 PCG 和场景工具，开放世界项目的 PCG 管线是从零搭起来的。现在在一个 UE5 单机项目里做 TA 负责人，渲染、材质、美术规范、场景工具都要管。</p></div></div>
 
-    <div class="irow rise"><div class="ik mono">RECENT</div><div class="iv">
-      <h3>MCP × Unreal Engine</h3><div class="where mono">2026.07 — 08</div>
+    <div class="irow rise"><div class="ik">最近</div><div class="iv">
+      <h3>MCP × Unreal Engine</h3><div class="where">2026.07 — 08</div>
       <p>试着让 AI 通过 MCP 直接操作 Unreal 编辑器：一句话导资产、搭场景、跑起来检查。哪一步容易出错就记下来，回头改工具。</p></div></div>
 
-    <p class="sub sub2 mono rise"><span>平时做的事</span><span>C 是主线</span></p>
-    <div class="duty">
-      <article class="rise"><span class="mono">A</span><h4>渲染与性能</h4><ul>
-        <li>Lumen、TOD 和材质的配合</li><li>角色 GPU Pass 分析，定画质档位</li><li>体积雾、后处理、环境交互</li><li>材质实例和贴图复用</li></ul></article>
-      <article class="rise"><span class="mono">B</span><h4>美术规范</h4><ul>
-        <li>角色 LOD、贴图、材质槽预算</li><li>场景和角色的性能验收标准</li><li>项目材质库和资产规范</li><li>实时布料解算的生产流程</li></ul></article>
-      <article class="rise core"><span class="mono">C · 主线</span><h4>PCG</h4><ul>
-        <li>Houdini 大世界程序化生成</li><li>PCG 撒点、建筑动态生成</li><li>Gaea 到 UE 的整套流程</li><li>MassAI 配合 Houdini PCG</li></ul></article>
-      <article class="rise"><span class="mono">D</span><h4>工具与流程</h4><ul>
-        <li>场景规范提示、性能检查工具</li><li>Blender 等 DCC 与 UE 的同步导入</li><li>资产检查和批量处理</li><li>用 MCP 辅助 Unreal 工作流</li></ul></article>
-    </div>
+    <div class="blk rise" style="margin-top:clamp(56px,7vw,96px)"><div class="k"><span class="lab">平时做的事</span></div><div class="v">
+      <div class="duty2">
+        <article class="core"><h4>PCG<small>主线</small></h4><ul>
+          <li>Houdini 大世界程序化生成</li><li>PCG 撒点、建筑动态生成</li><li>Gaea 到 UE 的整套流程</li><li>MassAI 配合 Houdini PCG</li></ul></article>
+        <article><h4>渲染与性能</h4><ul>
+          <li>Lumen、TOD 和材质的配合</li><li>角色 GPU Pass 分析，定画质档位</li><li>体积雾、后处理、环境交互</li><li>材质实例和贴图复用</li></ul></article>
+        <article><h4>美术规范</h4><ul>
+          <li>角色 LOD、贴图、材质槽预算</li><li>场景和角色的性能验收标准</li><li>项目材质库和资产规范</li><li>实时布料解算的生产流程</li></ul></article>
+        <article><h4>工具与流程</h4><ul>
+          <li>场景规范提示、性能检查工具</li><li>Blender 等 DCC 与 UE 的同步导入</li><li>资产检查和批量处理</li><li>用 MCP 辅助 Unreal 工作流</li></ul></article>
+      </div></div></div>
 
-    <p class="sub mono rise">PROJECTS · 由近到远</p>
-    <ol class="tl">
-      <li class="rise"><span class="yr mono">2025 H2 — NOW</span><div class="bd"><h3>UE5 单机项目</h3><span class="role">TA Leader</span>
-        <p>负责美术技术这块的规划，和各组一起定渲染、材质、场景交互、资产规范和性能验收。MCP 工作流也是在这个项目里试的。</p></div></li>
-      <li class="rise"><span class="yr mono">2022 — 2025</span><div class="bd"><h3>都市题材开放世界项目</h3><span class="role">PCG · 场景工具 · 从零搭建</span>
-        <p>从零搭 PCG 和场景工具：地形、道路、植被、建筑，以及场景性能优化。工具主要用 PCG Graph、Geometry Script 和 Utility Widget 来做。</p></div></li>
-      <li class="rise"><span class="yr mono">2022 H1</span><div class="bd"><h3>奥星热浪</h3><span class="role">PCG 场景搭建</span>
-        <p>用程序化的方式搭场景，把工具用到实际关卡里。</p></div></li>
-      <li class="rise"><span class="yr mono">2021 — 2022</span><div class="bd"><h3>PCG 工具研究</h3><span class="role">Houdini PCG 管线</span>
-        <p>刚入职时的前期研究，主要是 Houdini PCG 管线，从实验一路做到能进引擎。</p></div></li>
-    </ol>
+    <div class="blk rise"><div class="k"><span class="lab">项目 · 由近到远</span></div><div class="v">
+      <ol class="tl2">
+        <li><span class="yr">2025 H2 — NOW</span><div><h3>UE5 单机项目</h3><span class="role">项目 TA 负责人</span>
+          <p>负责这个项目美术技术的规划，和各组一起定渲染、材质、场景交互、资产规范和性能验收。MCP 工作流也是在这个项目里试的。</p></div></li>
+        <li><span class="yr">2022 — 2025</span><div><h3>都市题材开放世界项目</h3><span class="role">PCG · 场景工具 · 从零搭建</span>
+          <p>从零搭 PCG 和场景工具：地形、道路、植被、建筑，以及场景性能优化。工具主要用 PCG Graph、Geometry Script 和 Utility Widget 来做。</p></div></li>
+        <li><span class="yr">2022 H1</span><div><h3>奥星热浪</h3><span class="role">PCG 场景搭建</span>
+          <p>用程序化的方式搭场景，把工具用到实际关卡里。</p></div></li>
+        <li><span class="yr">2021 — 2022</span><div><h3>PCG 工具研究</h3><span class="role">Houdini PCG 管线</span>
+          <p>刚入职时的前期研究，主要是 Houdini PCG 管线，从实验一路做到能进引擎。</p></div></li>
+      </ol></div></div>
   </div>
 </section>
 
 <section class="sec tone-dark" id="ta" data-tone="dark">
   <div class="wrap">
-    <header class="chap rise"><span class="chap-num"><span class="cn">贰</span><span class="mono">TA WORKS</span></span><h2 class="chap-title">技术美术作品</h2><p class="chap-note">本职工作里能公开的部分：PCG 地形、运行时生成和场景工具。更细的技术内容在 <a class="lead-link" href="resume-classic.html">技术履历页</a>。</p></header>
+    <header class="chap rise"><span class="cn">贰</span><div class="v"><h2>技术美术作品</h2><p>本职工作里能公开的部分：PCG 地形、运行时生成、场景工具和渲染实验。更细的技术内容在 <a href="resume-classic.html">技术履历页</a>。</p></div></header>
 
-    <div class="feature"><figure class="fig rise" style="--w:1920;--h:1080"><button class="m" data-view data-kind="video" data-src="assets/media1.mp4" data-title="Meili 雪山" data-desc="地形在 Houdini 里生成，整套导进 UE5 后实时运行。视频是编辑器里的实时画面。"><img src="assets/resume/snow-poster.jpg" alt="Meili 雪山" loading="lazy" decoding="async"><i class="pl"></i></button><figcaption><b>Meili 雪山</b><span>HOUDINI → UE5</span></figcaption></figure><div class="txt rise"><span class="mono">HOUDINI → UE5</span><h4>Meili 雪山</h4><p>地形在 Houdini 里生成，整套导进 UE5 后实时运行。</p></div></div>
-    <div class="feature rev"><figure class="fig rise" style="--w:1920;--h:1080"><button class="m" data-view data-kind="video" data-src="assets/media10.mp4" data-title="建筑 · 运行时生成" data-desc="Runtime PCG：建筑的外面和里面都在运行时生成，可以一直生成下去，也能打坏。"><img src="assets/image20.webp" alt="建筑 · 运行时生成" loading="lazy" decoding="async"><i class="pl"></i></button><figcaption><b>建筑 · 运行时生成</b><span>RUNTIME PCG</span></figcaption></figure><div class="txt rise"><span class="mono">RUNTIME PCG</span><h4>建筑 · 运行时生成</h4><p>外面和里面都在运行时生成，可以一直生成下去，也能打坏。</p></div></div>
+    <div class="blk feat"><div class="k rise"><span class="num">01</span><span class="lab">Houdini → UE5</span></div><div class="v"><figure class="fig rise" style="--w:1920;--h:1080"><button class="m" data-view data-kind="video" data-src="assets/media1.mp4" data-title="Meili 雪山" data-desc="地形在 Houdini 里生成，整套导进 UE5 后实时运行。视频是编辑器里的实时画面。"><img src="assets/resume/snow-poster.jpg" alt="Meili 雪山" loading="lazy" decoding="async"><i class="pl"></i></button><figcaption><b>Meili 雪山</b><span>Houdini → UE5</span></figcaption></figure><div class="cap rise"><h3 class="h3">Meili 雪山</h3><p class="prose">地形在 Houdini 里生成，整套导进 UE5 后实时运行。视频是编辑器里的实时画面。</p></div></div></div>
+    <div class="blk feat"><div class="k rise"><span class="num">02</span><span class="lab">Runtime PCG</span></div><div class="v"><figure class="fig rise" style="--w:1920;--h:1080"><button class="m" data-view data-kind="video" data-src="assets/media10.mp4" data-title="建筑 · 运行时生成" data-desc="建筑的外面和里面都在运行时生成，可以一直生成下去，也能打坏。"><img src="assets/image20.webp" alt="建筑 · 运行时生成" loading="lazy" decoding="async"><i class="pl"></i></button><figcaption><b>建筑 · 运行时生成</b><span>Runtime PCG</span></figcaption></figure><div class="cap rise"><h3 class="h3">建筑 · 运行时生成</h3><p class="prose">建筑的外面和里面都在运行时生成，可以一直生成下去，也能打坏。</p></div></div></div>
+    <div class="blk feat"><div class="k rise"><span class="num">03</span><span class="lab">UE5 实验</span></div><div class="v"><figure class="fig rise" style="--w:1920;--h:1080"><button class="m" data-view data-kind="video" data-src="assets/resume/ascii-matrix.mp4" data-title="汉字 ASCII Matrix" data-desc="在 UE5 里做的字符雨，把字母换成了汉字，叠在城市夜景上。"><img src="assets/resume/ascii-matrix.jpg" alt="汉字 ASCII Matrix" loading="lazy" decoding="async"><i class="pl"></i></button><figcaption><b>汉字 ASCII Matrix</b><span>UE5 实验</span></figcaption></figure><div class="cap rise"><h3 class="h3">汉字 ASCII Matrix</h3><p class="prose">在 UE5 里做的字符雨，把字母换成了汉字，叠在城市夜景上。</p></div></div></div>
 
-    <div class="index-head mono"><span>其余工具和实验</span><span>悬停预览 · 点击查看</span></div>
-    <ol class="idx">
-      <li class="rise"><button class="idx-row" data-view data-kind="video" data-src="assets/media8.mp4" data-poster="assets/image18.webp" data-peek="assets/image18.webp" data-title="Gaea → UE 一键流程" data-desc="地形从造型、侵蚀、材质、分层到河流湖泊和植被，都在 Gaea 里做完，一键导进引擎。"><span class="n mono">01</span><span class="nm vd">Gaea → UE 一键流程</span><span class="tg">地形</span><span class="ds">造型到植被都在 Gaea 里做完，一键进引擎。</span><span class="go mono">+</span></button></li>
-      <li class="rise"><button class="idx-row" data-view data-kind="image" data-src="assets/image10.webp" data-poster="assets/image10.webp" data-peek="assets/image10.webp" data-title="道路工具" data-desc="基于 PCG Graph 的道路工具：路网、路缘和路面材质一起生成。"><span class="n mono">02</span><span class="nm">道路工具</span><span class="tg">PCG GRAPH</span><span class="ds">路网、路缘、路面材质一起生成。</span><span class="go mono">+</span></button></li>
-      <li class="rise"><button class="idx-row" data-view data-kind="image" data-src="assets/image14.webp" data-poster="assets/image14.webp" data-peek="assets/image14.webp" data-title="MassAI 路网" data-desc="道路画好之后，MassAI 用的路网信息自动跟着生成。"><span class="n mono">03</span><span class="nm">MassAI 路网</span><span class="tg">PCG 工具</span><span class="ds">道路画好，人群和车流的路网跟着出来。</span><span class="go mono">+</span></button></li>
-      <li class="rise"><button class="idx-row" data-view data-kind="video" data-src="assets/media12.mp4" data-poster="assets/image22.webp" data-peek="assets/image22.webp" data-title="Blender – UE 同步" data-desc="Blender 里改，UE 里同步更新，省掉来回导入。"><span class="n mono">04</span><span class="nm vd">Blender – UE 同步</span><span class="tg">DCC 工具</span><span class="ds">Blender 里改，UE 里同步，不用来回导。</span><span class="go mono">+</span></button></li>
-      <li class="rise"><button class="idx-row" data-view data-kind="image" data-src="assets/image23.webp" data-poster="assets/image23.webp" data-peek="assets/image23.webp" data-title="雾效绘制工具" data-desc="在引擎里直接画体积雾的范围，调浓度和噪声。"><span class="n mono">05</span><span class="nm">雾效绘制工具</span><span class="tg">渲染工具</span><span class="ds">在引擎里直接画雾，调浓度和噪声。</span><span class="go mono">+</span></button></li>
-      <li class="rise"><button class="idx-row" data-view data-kind="video" data-src="assets/media11.mp4" data-poster="assets/image21.webp" data-peek="assets/image21.webp" data-title="给策划用的面板" data-desc="随机或按区域摆放道具、换材质，参数做成面板，策划自己就能调。"><span class="n mono">06</span><span class="nm vd">给策划用的面板</span><span class="tg">RUNTIME PCG</span><span class="ds">PCG 参数做成面板，策划自己就能调。</span><span class="go mono">+</span></button></li>
-      <li class="rise"><button class="idx-row" data-view data-kind="video" data-src="assets/resume/ascii-matrix.mp4" data-poster="assets/resume/ascii-matrix.jpg" data-peek="assets/resume/ascii-matrix.jpg" data-title="汉字 ASCII Matrix" data-desc="在 UE5 里做的字符雨，把字母换成了汉字，叠在城市夜景上。"><span class="n mono">07</span><span class="nm vd">汉字 ASCII Matrix</span><span class="tg">UE5 实验</span><span class="ds">字符雨里的字母换成汉字。</span><span class="go mono">+</span></button></li>
-    </ol>
+    <div class="blk" style="margin-top:clamp(88px,11vw,160px)"><div class="k rise"><span class="num">04 — 09</span><span class="lab">其余工具和实验</span></div>
+      <div class="v"><div class="cards">
+        <button class="card rise" data-view data-kind="video" data-src="assets/media8.mp4" data-poster="assets/image18.webp" data-title="Gaea → UE 一键流程" data-desc="造型、侵蚀、材质、河流湖泊到植被都在 Gaea 里做完，一键导进引擎。"><span class="frame"><img src="assets/image18.webp" alt="Gaea → UE 一键流程" loading="lazy" decoding="async"><i class="pl"></i></span><h4 class="h4s">Gaea → UE 一键流程</h4><p>造型、侵蚀、材质、河流湖泊到植被都在 Gaea 里做完，一键导进引擎。</p><span class="tg">地形 · 视频</span></button>
+        <button class="card rise" data-view data-kind="image" data-src="assets/image10.webp" data-poster="assets/image10.webp" data-title="道路工具" data-desc="路网、路缘和路面材质一起生成。"><span class="frame"><img src="assets/image10.webp" alt="道路工具" loading="lazy" decoding="async"></span><h4 class="h4s">道路工具</h4><p>路网、路缘和路面材质一起生成。</p><span class="tg">PCG Graph</span></button>
+        <button class="card rise" data-view data-kind="image" data-src="assets/image14.webp" data-poster="assets/image14.webp" data-title="MassAI 路网" data-desc="道路画好之后，人群和车流用的路网自动跟着生成。"><span class="frame"><img src="assets/image14.webp" alt="MassAI 路网" loading="lazy" decoding="async"></span><h4 class="h4s">MassAI 路网</h4><p>道路画好之后，人群和车流用的路网自动跟着生成。</p><span class="tg">PCG 工具</span></button>
+        <button class="card rise" data-view data-kind="video" data-src="assets/media12.mp4" data-poster="assets/image22.webp" data-title="Blender – UE 同步" data-desc="Blender 里改，UE 里同步更新，省掉来回导入。"><span class="frame"><img src="assets/image22.webp" alt="Blender – UE 同步" loading="lazy" decoding="async"><i class="pl"></i></span><h4 class="h4s">Blender – UE 同步</h4><p>Blender 里改，UE 里同步更新，省掉来回导入。</p><span class="tg">DCC 工具 · 视频</span></button>
+        <button class="card rise" data-view data-kind="image" data-src="assets/image23.webp" data-poster="assets/image23.webp" data-title="雾效绘制工具" data-desc="在引擎里直接画体积雾的范围，调浓度和噪声。"><span class="frame"><img src="assets/image23.webp" alt="雾效绘制工具" loading="lazy" decoding="async"></span><h4 class="h4s">雾效绘制工具</h4><p>在引擎里直接画体积雾的范围，调浓度和噪声。</p><span class="tg">渲染工具</span></button>
+        <button class="card rise" data-view data-kind="video" data-src="assets/media11.mp4" data-poster="assets/image21.webp" data-title="给策划用的面板" data-desc="随机或按区域摆道具、换材质，参数做成面板，策划自己就能调。"><span class="frame"><img src="assets/image21.webp" alt="给策划用的面板" loading="lazy" decoding="async"><i class="pl"></i></span><h4 class="h4s">给策划用的面板</h4><p>随机或按区域摆道具、换材质，参数做成面板，策划自己就能调。</p><span class="tg">Runtime PCG · 视频</span></button>
+      </div></div></div>
   </div>
 </section>
 
 <section class="sec tone-paper" id="works" data-tone="paper">
   <div class="wrap">
-    <header class="chap rise"><span class="chap-num"><span class="cn">叁</span><span class="mono">WORKS</span></span><h2 class="chap-title">个人作品</h2><p class="chap-note">工作之外自己做的东西，大多最后会打印出来。</p></header>
+    <header class="chap rise"><span class="cn">叁</span><div class="v"><h2>个人作品</h2><p>工作之外自己做的东西，大多最后会打印出来。</p></div></header>
 
-    <article class="topic">
-      <div class="t-head">
-        <div class="t-meta rise"><span class="t-num mono">01</span><h3 class="t-title">一只花瓶</h3><span class="t-en mono">MIDJOURNEY → HOUDINI → 3D 打印</span></div>
-        <div class="t-story rise"><p>先用 Midjourney 跑了一大批花瓶，挑出喜欢的曲线；再到 Houdini 里用节点自己搭一个，形状可以随便调；最后打印出来，插上花。</p></div>
-      </div>
-      <div class="row"><figure class="fig rise" style="--w:1637;--h:1114"><button class="m" data-view data-kind="image" data-src="assets/resume/vase-studies.jpg" data-title="Midjourney 跑的一批花瓶" data-desc="先用 Midjourney 跑一大批，放在一起看，挑出想继续做的曲线。"><img src="assets/resume/vase-studies.jpg" alt="Midjourney 跑的一批花瓶" loading="lazy" decoding="async"></button><figcaption><b>Midjourney 跑的一批</b><span>挑方向</span></figcaption></figure><figure class="fig rise" style="--w:1920;--h:1080"><button class="m" data-view data-kind="video" data-src="assets/resume/vase-process.mp4" data-title="Houdini 里用节点搭" data-desc="在 Houdini 里用节点搭出类似的形状：扭转的曲面，参数随时可调。"><img src="assets/resume/vase-houdini.jpg" alt="Houdini 里用节点搭" loading="lazy" decoding="async"><i class="pl"></i></button><figcaption><b>Houdini 里用节点搭</b><span>参数可调</span></figcaption></figure><figure class="fig rise" style="--w:2474;--h:3299"><button class="m" data-view data-kind="image" data-src="assets/resume/vase-photo.jpg" data-title="打印出来，插上花" data-desc="打印好的花瓶，插上花。"><img src="assets/resume/vase-photo.jpg" alt="打印出来，插上花" loading="lazy" decoding="async"></button><figcaption><b>打印出来，插上花</b><span>3D 打印</span></figcaption></figure></div>
+    <article class="item">
+      <div class="blk rise"><div class="k"><span class="num">01</span><span class="lab">Midjourney → Houdini → 3D 打印</span></div><div class="v"><h3 class="h3">一只花瓶</h3><p class="prose">先用 Midjourney 跑了一大批花瓶，挑出喜欢的曲线。再到 Houdini 里用节点自己搭一个，形状可以随便调。最后打印出来，插上花。</p></div></div>
+      <div class="row"><figure class="fig rise" style="--w:1637;--h:1114"><button class="m" data-view data-kind="image" data-src="assets/resume/vase-studies.jpg" data-title="Midjourney 跑的一批花瓶" data-desc="先用 Midjourney 跑一大批，放在一起看，挑出想继续做的曲线。"><img src="assets/resume/vase-studies.jpg" alt="Midjourney 跑的一批花瓶" loading="lazy" decoding="async"></button><figcaption><b>Midjourney 跑的一批</b><span>挑方向</span></figcaption></figure><figure class="fig rise" style="--w:1920;--h:1080"><button class="m" data-view data-kind="video" data-src="assets/resume/vase-process.mp4" data-title="Houdini 里用节点搭" data-desc="在 Houdini 里用节点搭出类似的形状：扭转的曲面、法线检查、调形状，参数随时可改。"><img src="assets/resume/vase-houdini.jpg" alt="Houdini 里用节点搭" loading="lazy" decoding="async"><i class="pl"></i></button><figcaption><b>Houdini 里用节点搭</b><span>参数可调</span></figcaption></figure><figure class="fig rise" style="--w:2474;--h:3299"><button class="m" data-view data-kind="image" data-src="assets/resume/vase-photo.jpg" data-title="打印出来，插上花" data-desc="打印好的花瓶，插上花。"><img src="assets/resume/vase-photo.jpg" alt="打印出来，插上花" loading="lazy" decoding="async"></button><figcaption><b>打印出来，插上花</b><span>3D 打印</span></figcaption></figure></div>
     </article>
 
-    <article class="topic">
-      <div class="t-head">
-        <div class="t-meta rise"><span class="t-num mono">02</span><h3 class="t-title">赛博角色</h3><span class="t-en mono">项目需求 · 程序化生成</span></div>
-        <div class="t-story rise"><p>项目要大量赛博风格的角色，每个都得不一样，但又不能跑出设定。我做了一套生成节点：装备、面纹、体型由噪声和规则控制，换一个随机种子就是一个新角色。面纹可以直接在脸上画范围，画在哪儿就长在哪儿。</p>
-          <p class="note">气质参考的是《攻壳机动队》（1995）。</p></div>
-      </div>
-      <div class="row"><figure class="fig rise" style="--w:1920;--h:1080"><button class="m" data-view data-kind="video" data-src="assets/resume/char-showcase.mp4" data-title="换一个种子，换一个角色" data-desc="同一套节点生成的不同角色：配色、装备、体型都不一样。"><img src="assets/resume/char-female.jpg" alt="换一个种子，换一个角色" loading="lazy" decoding="async"><i class="pl"></i></button><figcaption><b>换一个种子，换一个角色</b><span>Houdini</span></figcaption></figure><figure class="fig rise" style="--w:1280;--h:720"><button class="m" data-view data-kind="video" data-src="assets/resume/gits-head.mp4" data-title="在脸上画范围" data-desc="在脸上画出范围，面纹和面罩就按风格长在那里。"><img src="assets/resume/gits-headpaint.jpg" alt="在脸上画范围" loading="lazy" decoding="async"><i class="pl"></i></button><figcaption><b>在脸上画范围</b><span>局部生成</span></figcaption></figure></div>
+    <article class="item">
+      <div class="blk rise"><div class="k"><span class="num">02</span><span class="lab">项目需求 · 程序化生成</span></div><div class="v"><h3 class="h3">赛博角色</h3><p class="prose">项目要大量赛博风格的角色，每个都得不一样，但又不能跑出设定。我做了一套生成节点：装备、面纹、体型由噪声和规则控制，换一个随机种子就是一个新角色。面纹可以直接在脸上画范围，画在哪儿就长在哪儿。</p><p class="prose">整体气质参考的是《攻壳机动队》（1995），最后一行是参考剧照。</p></div></div>
+      <div class="row"><figure class="fig rise" style="--w:1920;--h:1080"><button class="m" data-view data-kind="video" data-src="assets/resume/char-showcase.mp4" data-title="换一个种子，换一个角色" data-desc="同一套节点生成的不同角色：配色、装备、体型都不一样，多角度转着看。"><img src="assets/resume/char-female.jpg" alt="换一个种子，换一个角色" loading="lazy" decoding="async"><i class="pl"></i></button><figcaption><b>换一个种子，换一个角色</b><span>Houdini</span></figcaption></figure><figure class="fig rise" style="--w:1078;--h:720"><button class="m" data-view data-kind="video" data-src="assets/resume/gits-suits.mp4" data-title="装备 · 一批六件" data-desc="装备的形状由专门设计的噪声控制，每换一次种子就是一批新的，但都不会跑出设定。"><img src="assets/resume/gits-suits.jpg" alt="装备 · 一批六件" loading="lazy" decoding="async"><i class="pl"></i></button><figcaption><b>装备 · 一批六件</b><span>局部生成</span></figcaption></figure></div>
+      <div class="row"><figure class="fig rise" style="--w:1280;--h:720"><button class="m" data-view data-kind="video" data-src="assets/resume/gits-head.mp4" data-title="在脸上画范围" data-desc="在脸上画出范围，面纹和面罩就按风格长在那里。"><img src="assets/resume/gits-headpaint.jpg" alt="在脸上画范围" loading="lazy" decoding="async"><i class="pl"></i></button><figcaption><b>在脸上画范围</b><span>局部生成</span></figcaption></figure><figure class="fig rise" style="--w:1920;--h:1080"><button class="m" data-view data-kind="video" data-src="assets/resume/char-skinning.mp4" data-title="节点和蒙皮" data-desc="Houdini 里的角色节点：从 T-pose 调整到蒙皮权重，生成出来的角色可以直接进动画流程。"><img src="assets/resume/char-houdini.jpg" alt="节点和蒙皮" loading="lazy" decoding="async"><i class="pl"></i></button><figcaption><b>节点和蒙皮</b><span>Houdini</span></figcaption></figure></div>
+      <div class="row"><figure class="fig rise" style="--w:2000;--h:1333"><button class="m" data-view data-kind="image" data-src="assets/resume/gits-ref-1.jpg" data-title="参考 ·《攻壳机动队》(1995)" data-desc="角色气质的参考：《攻壳机动队》（1995）剧照。图片来自网络，只作风格参照。"><img src="assets/resume/gits-ref-1.jpg" alt="参考 ·《攻壳机动队》(1995)" loading="lazy" decoding="async"></button><figcaption><b>参考 ·《攻壳机动队》(1995)</b><span>图片来自网络</span></figcaption></figure><figure class="fig rise" style="--w:2400;--h:1350"><button class="m" data-view data-kind="image" data-src="assets/resume/gits-ref-2.jpg" data-title="参考 ·《攻壳机动队》(1995)" data-desc="角色气质的参考：《攻壳机动队》（1995）剧照。图片来自网络，只作风格参照。"><img src="assets/resume/gits-ref-2.jpg" alt="参考 ·《攻壳机动队》(1995)" loading="lazy" decoding="async"></button><figcaption><b>参考 ·《攻壳机动队》(1995)</b><span>图片来自网络</span></figcaption></figure></div>
     </article>
   </div>
 </section>
 
 <section class="sec tone-dark" id="artstudio" data-tone="dark">
   <div class="wrap">
-    <header class="chap rise"><span class="chap-num"><span class="cn">肆</span><span class="mono">ARTSTUDIO</span></span><h2 class="chap-title">ArtStudio</h2><p class="chap-note">给自己做 3D 打印用的小网站，跑在自己电脑上。</p></header>
+    <header class="chap rise"><span class="cn">肆</span><div class="v"><h2>ArtStudio</h2><p>给自己做 3D 打印用的小网站，跑在自己电脑上。最早只是几个批量出图的脚本，用着不顺手，后来做成了网页。</p></div></header>
 
-    <p class="as-lead rise">繁琐的事都交给它，<b>挑选和方向</b>留给自己。</p>
-    <p class="as-aside rise">下面拿「在身上生长」这件作品，走一遍从一个想法到拿在手里的过程。标着「我」的两步是我做的，其余是它做的。</p>
+    <div class="blk rise"><div class="k"><span class="lab">一句话</span></div>
+      <div class="v"><p class="as-lead2">繁琐的事都交给它，<em>挑选和方向</em>留给自己。</p>
+        <p class="prose" style="margin-top:22px">我给一张参考图，它出一批图，我挑一张，它再把这张变成能打印的模型。</p></div></div>
 
-    <div class="steps"><div class="step rise"><button class="frame" data-view data-kind="image" data-src="assets/resume/artstudio-ui.png" data-title="ArtStudio 界面" data-desc="左边放参考图和一句说明，设好要几条提示词，点「扩写并生成」。"><img src="assets/resume/artstudio-ui.png" alt="ArtStudio 界面" loading="lazy" decoding="async"></button><div class="step-cap"><span class="step-no">01</span><span class="who me">我</span><h4>给个方向</h4></div><p>放一张参考图，写一句想要什么。</p></div><div class="step rise"><button class="frame" data-view data-kind="image" data-src="assets/resume/artstudio-eagle.jpg" data-title="Eagle 里的一个系列" data-desc="出图结果自动进 Eagle，一个系列一个文件夹。图里是「木雕动物群像」系列的 50 张候选。"><img src="assets/resume/artstudio-eagle.jpg" alt="Eagle 里的一个系列" loading="lazy" decoding="async"></button><div class="step-cap"><span class="step-no">02</span><span class="who">它</span><h4>写提示词，批量出图</h4></div><p>它看着参考图扩写出一批提示词，选好模型和数量就开始出图。一个系列能出几百上千张，结果自动收进 Eagle。</p></div><div class="step rise"><button class="frame" data-view data-kind="image" data-src="assets/resume/print-bloom-render.jpg" data-title="在身上生长 · 挑中的那张" data-desc="「在身上生长」系列里挑中的一张：双臂举过头顶，花枝沿着脊背长出来。"><img src="assets/resume/print-bloom-render.jpg" alt="在身上生长 · 挑中的那张" loading="lazy" decoding="async"></button><div class="step-cap"><span class="step-no">03</span><span class="who me">我</span><h4>挑</h4></div><p>从一堆候选里挑出想继续做的那张。没有满意的，就改改提示词再跑一批。</p></div><div class="step rise"><button class="frame" data-view data-kind="image" data-src="assets/resume/print-bloom-a.jpg" data-title="在身上生长 · 打印实物" data-desc="打印出来的实物。家里随手拍的，正式照片还在准备。"><img src="assets/resume/print-bloom-a.jpg" alt="在身上生长 · 打印实物" loading="lazy" decoding="async"></button><div class="step-cap"><span class="step-no">04</span><span class="who">它</span><h4>变成实物</h4></div><p>选中的图转成 3D 模型，自动减面、修好格式，一键送去切片打印。</p></div></div>
+    <div class="blk" style="margin-top:clamp(56px,7vw,96px)"><div class="k rise"><span class="lab">和普通出图不一样的地方</span></div>
+      <div class="v"><ol class="ideas"><li class="rise"><span class="num">01</span><h4 class="h4s">先读懂，再写提示词</h4><p>它先看参考图，把材质、打光、拍法这些定下来，每条提示词只换主体。所以一批图像同一位雕塑家的一组作品，而不是几十张互不相干的图。</p></li><li class="rise"><span class="num">02</span><h4 class="h4s">想象力是一个旋钮</h4><p>从 0 到 1：0 是照着参考图复刻，1 是放开去想。平时我只调这一个数。</p></li><li class="rise"><span class="num">03</span><h4 class="h4s"><em>我只管方向和挑</em></h4><p>写提示词、出图、转模型、减面、切片都交给它。不满意就换参考图或者拧一下旋钮，再跑一批。</p></li></ol></div></div>
 
-    <div class="as-best rise"><span class="mono">用它打印的其他几件</span><p>最早只是几个批量出图的脚本，填提示词、跑脚本、去文件夹里翻结果，用着不顺手，后来就做成了网页。</p></div>
-    <div class="frames" style="--n:3"><figure class="fig rise"><button class="frame" data-view data-kind="image" data-src="assets/resume/print-bloom-b.jpg" data-title="折叠的人" data-desc="上半身向前折下去，头垂在两腿之间。"><img src="assets/resume/print-bloom-b.jpg" alt="折叠的人" loading="lazy" decoding="async"></button><figcaption><b>折叠的人</b><span>3D 打印</span></figcaption></figure><figure class="fig rise"><button class="frame" data-view data-kind="image" data-src="assets/resume/print-group.jpg" data-title="纠缠的群像" data-desc="几个人纠缠在一起，构图来自古典群雕。"><img src="assets/resume/print-group.jpg" alt="纠缠的群像" loading="lazy" decoding="async"></button><figcaption><b>纠缠的群像</b><span>3D 打印</span></figcaption></figure><figure class="fig rise"><button class="frame" data-view data-kind="image" data-src="assets/resume/vase-hand.jpg" data-title="另一只花瓶" data-desc="同一个花瓶换了配色再打一只，插红色康乃馨。"><img src="assets/resume/vase-hand.jpg" alt="另一只花瓶" loading="lazy" decoding="async"></button><figcaption><b>另一只花瓶</b><span>3D 打印</span></figcaption></figure></div>
+    <div class="blk" style="margin-top:clamp(56px,7vw,96px)"><div class="k rise"><span class="lab">「在身上生长」这一件</span></div>
+      <div class="v"><div class="row"><figure class="fig rise" style="--w:768;--h:1376"><button class="m" data-view data-kind="image" data-src="assets/resume/as-ref.jpg" data-title="参考图" data-desc="给它的参考图。"><img src="assets/resume/as-ref.jpg" alt="参考图" loading="lazy" decoding="async"></button><figcaption><b>给它一张参考图</b><span>我</span></figcaption></figure><figure class="fig rise" style="--w:2248;--h:1184"><button class="m" data-view data-kind="image" data-src="assets/resume/as-sheet.jpg" data-title="一批 30 张" data-desc="它按参考图出的一批 30 张，蓝框是挑中的那张。"><img src="assets/resume/as-sheet.jpg" alt="一批 30 张" loading="lazy" decoding="async"></button><figcaption><b>它出一批 30 张</b><span>它</span></figcaption></figure><figure class="fig rise" style="--w:765;--h:1360"><button class="m" data-view data-kind="image" data-src="assets/resume/print-bloom-render.jpg" data-title="挑中的一张" data-desc="从 30 张里挑中的这一张，后来打印成了实物。"><img src="assets/resume/print-bloom-render.jpg" alt="挑中的一张" loading="lazy" decoding="async"></button><figcaption><b>挑一张</b><span>我</span></figcaption></figure></div></div></div>
+
+    <div class="blk" style="margin-top:clamp(40px,5vw,64px)"><div class="k rise"><span class="lab">打出来的</span></div>
+      <div class="v"><div class="frames" style="--n:4"><figure class="fig rise"><button class="frame" data-view data-kind="image" data-src="assets/resume/print-bloom-a.jpg" data-title="在身上生长" data-desc="上面挑中的那张打印出来的实物。家里随手拍的，正式照片还在准备。"><img src="assets/resume/print-bloom-a.jpg" alt="在身上生长" loading="lazy" decoding="async"></button><figcaption><b>在身上生长</b><span>上面那张</span></figcaption></figure><figure class="fig rise"><button class="frame" data-view data-kind="image" data-src="assets/resume/print-bloom-b.jpg" data-title="折叠的人" data-desc="上半身向前折下去，头垂在两腿之间。"><img src="assets/resume/print-bloom-b.jpg" alt="折叠的人" loading="lazy" decoding="async"></button><figcaption><b>折叠的人</b><span>3D 打印</span></figcaption></figure><figure class="fig rise"><button class="frame" data-view data-kind="image" data-src="assets/resume/print-group.jpg" data-title="纠缠的群像" data-desc="几个人纠缠在一起，构图来自古典群雕。"><img src="assets/resume/print-group.jpg" alt="纠缠的群像" loading="lazy" decoding="async"></button><figcaption><b>纠缠的群像</b><span>3D 打印</span></figcaption></figure><figure class="fig rise"><button class="frame" data-view data-kind="image" data-src="assets/resume/vase-hand.jpg" data-title="另一只花瓶" data-desc="同一个花瓶换了配色再打一只，插红色康乃馨。"><img src="assets/resume/vase-hand.jpg" alt="另一只花瓶" loading="lazy" decoding="async"></button><figcaption><b>另一只花瓶</b><span>3D 打印</span></figcaption></figure></div></div></div>
   </div>
 </section>
 
 <section class="sec tone-paper" id="more" data-tone="paper">
   <div class="wrap">
-    <header class="chap rise"><span class="chap-num"><span class="cn">伍</span><span class="mono">MORE</span></span><h2 class="chap-title">其他作品</h2><p class="chap-note">断断续续在做的几件小东西。</p></header>
+    <header class="chap rise"><span class="cn">伍</span><div class="v"><h2>其他作品</h2><p>断断续续在做的几件小东西。</p></div></header>
 
-    <article class="topic">
-      <div class="t-head">
-        <div class="t-meta rise"><span class="t-num mono">01</span><h3 class="t-title">蜡染图案</h3><span class="t-en mono">MIDJOURNEY · NANO BANANA</span></div>
-        <div class="t-story rise"><p>用 Midjourney 和 Nano Banana 做的蜡染图案练习，只用蓝白两色，试了布幔、蛇纹和叶脉。</p></div>
-      </div>
+    <article class="item">
+      <div class="blk rise"><div class="k"><span class="num">01</span><span class="lab">Midjourney · Nano Banana</span></div><div class="v"><h3 class="h3">蜡染图案</h3><p class="prose">用 Midjourney 和 Nano Banana 做的蜡染图案练习，只用蓝白两色，试了布幔、蛇纹和叶脉。</p></div></div>
       <div class="row"><figure class="fig rise" style="--w:1924;--h:1076"><button class="m" data-view data-kind="video" data-src="assets/resume/batik-stage.mp4" data-title="蜡染布幔" data-desc="一层层蓝染布幔垂下来，开口里能看到蓝白的山水和云纹。"><img src="assets/resume/batik-stage.jpg" alt="蜡染布幔" loading="lazy" decoding="async"><i class="pl"></i></button><figcaption><b>布幔</b><span>AI 生成</span></figcaption></figure><figure class="fig rise" style="--w:1920;--h:1920"><button class="m" data-view data-kind="image" data-src="assets/resume/batik-snake.jpg" data-title="蛇纹" data-desc="蓝白相间、盘起来的蛇纹。"><img src="assets/resume/batik-snake.jpg" alt="蛇纹" loading="lazy" decoding="async"></button><figcaption><b>蛇纹</b><span>AI 生成</span></figcaption></figure><figure class="fig rise" style="--w:1920;--h:1920"><button class="m" data-view data-kind="image" data-src="assets/resume/batik-leaf.jpg" data-title="叶脉" data-desc="放射状排开的蓝白叶子。"><img src="assets/resume/batik-leaf.jpg" alt="叶脉" loading="lazy" decoding="async"></button><figcaption><b>叶脉</b><span>AI 生成</span></figcaption></figure></div>
     </article>
 
-    <article class="topic">
-      <div class="t-head">
-        <div class="t-meta rise"><span class="t-num mono">02</span><h3 class="t-title">动作提取</h3><span class="t-en mono">几年前的小项目 · UE5</span></div>
-        <div class="t-story rise"><p>从视频里把人的动作提出来，套到 3D 角色上再渲染。动作提取用的是开源的 <a href="https://github.com/Jeff-sjtu/HybrIK" target="_blank" rel="noopener">HybrIK</a>（CVPR 2021），我做的是接进流程、搭场景和渲染。舞台照着我常去的深圳 Lavo 酒吧搭的。</p></div>
-      </div>
-      <div class="row"><figure class="fig rise" style="--w:1920;--h:1080"><button class="m" data-view data-kind="video" data-src="assets/resume/dance-robots.mp4" data-title="换个主角跳同一支舞" data-desc="《低俗小说》里那段舞，动作提出来以后给了金属质感的角色，舞台照着深圳 Lavo 酒吧搭的。动作来自原片，场景和角色是我做的。"><img src="assets/portfolio/dance.jpg" alt="换个主角跳同一支舞" loading="lazy" decoding="async"><i class="pl"></i></button><figcaption><b>换个主角跳同一支舞</b><span>UE5</span></figcaption></figure><figure class="fig rise" style="--w:1280;--h:720"><button class="m" data-view data-kind="video" data-src="assets/resume/ai-motion.mp4" data-title="从视频到 3D 角色" data-desc="右边是真人跳舞的视频，左边的 3D 灰模逐帧跟着动。"><img src="assets/resume/anim-houdini.jpg" alt="从视频到 3D 角色" loading="lazy" decoding="async"><i class="pl"></i></button><figcaption><b>从视频到 3D 角色</b><span>动作提取</span></figcaption></figure></div>
+    <article class="item">
+      <div class="blk rise"><div class="k"><span class="num">02</span><span class="lab">几年前的小项目 · UE5</span></div><div class="v"><h3 class="h3">动作提取</h3><p class="prose">从视频里把人的动作提出来，套到 3D 角色上再渲染。动作提取用的是开源的 <a href="https://github.com/Jeff-sjtu/HybrIK" target="_blank" rel="noopener">HybrIK</a>（CVPR 2021），我做的是接进流程、搭场景和渲染。舞台照着我常去的深圳 Lavo 酒吧搭的。</p></div></div>
+      <div class="row"><figure class="fig rise" style="--w:1920;--h:1080"><button class="m" data-view data-kind="video" data-src="assets/resume/dance-robots.mp4" data-title="换个主角跳同一支舞" data-desc="《低俗小说》里那段舞，动作提出来以后给了金属质感的角色，舞台照着深圳 Lavo 酒吧搭的。动作来自原片，场景和角色是我做的。"><img src="assets/portfolio/dance.jpg" alt="换个主角跳同一支舞" loading="lazy" decoding="async"><i class="pl"></i></button><figcaption><b>换个主角跳同一支舞</b><span>UE5</span></figcaption></figure><figure class="fig rise" style="--w:1280;--h:720"><button class="m" data-view data-kind="video" data-src="assets/resume/ai-motion.mp4" data-title="从视频到 3D 角色" data-desc="右边是真人跳舞的视频，左边的 3D 灰模逐帧跟着动。"><img src="assets/resume/anim-houdini.jpg" alt="从视频到 3D 角色" loading="lazy" decoding="async"><i class="pl"></i></button><figcaption><b>从视频到 3D 角色</b><span>动作提取</span></figcaption></figure><figure class="fig rise" style="--w:800;--h:533"><button class="m" data-view data-kind="image" data-src="assets/resume/lavo-bar.jpg" data-title="场景参考 · 深圳 Lavo 酒吧" data-desc="舞台场景的参考：常去的深圳 Lavo 酒吧，灯光和气氛来自这里。"><img src="assets/resume/lavo-bar.jpg" alt="场景参考 · 深圳 Lavo 酒吧" loading="lazy" decoding="async"></button><figcaption><b>场景参考 · Lavo 酒吧</b><span>参考照片</span></figcaption></figure></div>
     </article>
 
-    <article class="topic">
-      <div class="t-head">
-        <div class="t-meta rise"><span class="t-num mono">03</span><h3 class="t-title">安顺脸谱</h3><span class="t-en mono">扫描重建 → 青花瓷质感</span></div>
-        <div class="t-story rise"><p>回贵州安顺老家，把木雕脸谱扫描成模型，再把颜色重新映射成青花瓷的质感。</p></div>
-      </div>
+    <article class="item">
+      <div class="blk rise"><div class="k"><span class="num">03</span><span class="lab">扫描重建 → 青花瓷质感</span></div><div class="v"><h3 class="h3">安顺脸谱</h3><p class="prose">回贵州安顺老家，把木雕脸谱扫描成模型，再把颜色重新映射成青花瓷的质感。</p></div></div>
       <div class="row"><figure class="fig rise" style="--w:1024;--h:768"><button class="m" data-view data-kind="image" data-src="assets/resume/mask-wood.jpg" data-title="安顺木雕面具" data-desc="贵州安顺的木雕面具，有的上了彩，有的还是素坯。这是扫描的起点。"><img src="assets/resume/mask-wood.jpg" alt="安顺木雕面具" loading="lazy" decoding="async"></button><figcaption><b>木雕面具原件</b><span>实物</span></figcaption></figure><figure class="fig rise" style="--w:886;--h:886"><button class="m" data-view data-kind="image" data-src="assets/resume/mask-ceramic-1.jpg" data-title="青花瓷 · 般若面" data-desc="扫描重建后换成青花瓷质感：怒目、獠牙、火焰状的角。"><img src="assets/resume/mask-ceramic-1.jpg" alt="青花瓷 · 般若面" loading="lazy" decoding="async"></button><figcaption><b>般若面</b><span>青花瓷质感</span></figcaption></figure><figure class="fig rise" style="--w:886;--h:886"><button class="m" data-view data-kind="image" data-src="assets/resume/mask-ceramic-3.jpg" data-title="青花瓷 · 冠帽兽面" data-desc="带冠帽和两侧翼饰的兽面，鱼鳞和卷云纹。"><img src="assets/resume/mask-ceramic-3.jpg" alt="青花瓷 · 冠帽兽面" loading="lazy" decoding="async"></button><figcaption><b>冠帽兽面</b><span>青花瓷质感</span></figcaption></figure></div>
     </article>
   </div>
@@ -590,15 +736,14 @@ dialog[open] { display: grid; grid-template-rows: 1fr auto; }
 
 <footer class="sec footer tone-dark" id="contact" data-tone="dark">
   <div class="wrap">
-    <p class="mono rise" style="color:var(--faint);margin-bottom:18px;">CONTACT · 联系</p>
     <h2 class="big rise">张仁杰</h2>
     <div class="f-grid rise">
       <div><span class="mono">BASED IN</span><span class="v">深圳 · 腾讯光子工作室群</span></div>
-      <div><span class="mono">SOCIAL</span><a href="https://www.artstation.com/renjiezhang" target="_blank" rel="noopener">ArtStation ↗</a><a href="https://www.xiaohongshu.com/user/profile/647bfac9000000001c029456" target="_blank" rel="noopener">小红书 ↗</a></div>
-      <div><span class="mono">RESUME</span><a href="张仁杰_技术美术简历.pdf">PDF 简历 ↓</a><a href="resume-v2.html">完整简历页</a></div>
-      <div><span class="mono">MORE</span><a href="resume-classic.html">技术履历页</a><a href="#top">回到顶部 ↑</a></div>
+      <div><span class="lab">社交</span><a href="https://www.artstation.com/renjiezhang" target="_blank" rel="noopener">ArtStation ↗</a><a href="https://www.xiaohongshu.com/user/profile/647bfac9000000001c029456" target="_blank" rel="noopener">小红书 ↗</a></div>
+      <div><span class="lab">简历</span><a href="张仁杰_技术美术简历.pdf">PDF 简历 ↓</a><a href="resume-v2.html">完整简历页</a></div>
+      <div><span class="lab">更多</span><a href="resume-classic.html">技术履历页</a><a href="#top">回到顶部 ↑</a></div>
     </div>
-    <div class="copy mono"><span>© <span id="year">2026</span> 张仁杰</span><span>慢慢更新</span></div>
+    <div class="copy"><span class="lab">© <span id="year">2026</span> 张仁杰</span><span class="lab">慢慢更新</span></div>
   </div>
 </footer>
 </main>
@@ -611,7 +756,6 @@ dialog[open] { display: grid; grid-template-rows: 1fr auto; }
   <div class="lb-info"><h2 id="lb-title"></h2><p class="lb-desc"></p></div>
   <button class="lb-btn lb-close" aria-label="关闭">CLOSE ✕</button>
 </dialog>
-<div class="peek" id="peek" aria-hidden="true"><img alt=""></div>
 <script>
 (() => {
   const $ = (s, r = document) => r.querySelector(s);
@@ -633,7 +777,7 @@ dialog[open] { display: grid; grid-template-rows: 1fr auto; }
   /* 顶栏：按当前所处章节切换深浅 + scrollspy */
   const nav = $('#nav'), links = $$('#navLinks a');
   const secs = $$('section[data-tone], footer[data-tone]');
-  const ids = ['info', 'works', 'artstudio', 'ta', 'more', 'contact'];
+  const ids = ['info', 'ta', 'works', 'artstudio', 'more', 'contact'];
   const onScroll = () => {
     nav.classList.toggle('is-stuck', scrollY > 8);
     const y = 44;
@@ -650,19 +794,6 @@ dialog[open] { display: grid; grid-template-rows: 1fr auto; }
   addEventListener('scroll', onScroll, { passive: true });
   addEventListener('resize', onScroll);
   onScroll();
-
-  /* 索引表：悬停预览 */
-  const peek = $('#peek'), peekImg = $('img', peek);
-  let px = 0, py = 0, raf = 0;
-  const move = () => { raf = 0; peek.style.transform = `translate3d(${px}px, ${py}px, 0)`; };
-  $$('.idx-row').forEach(row => {
-    row.addEventListener('mouseenter', () => { peekImg.src = row.dataset.peek; peek.classList.add('on'); });
-    row.addEventListener('mouseleave', () => peek.classList.remove('on'));
-    row.addEventListener('mousemove', e => {
-      px = Math.min(e.clientX + 28, innerWidth - 310); py = Math.min(e.clientY - 70, innerHeight - 200);
-      if (!raf) raf = requestAnimationFrame(move);
-    });
-  });
 
   /* 灯箱 */
   const lb = $('#lb'), stage = $('#lbStage'), items = $$('[data-view]');
