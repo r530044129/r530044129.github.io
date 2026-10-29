@@ -796,22 +796,20 @@ body { font-size: var(--body); }
   <div class="lb-info"><h2 id="lb-title"></h2><p class="lb-desc"></p></div>
   <button class="lb-btn lb-close" aria-label="关闭">CLOSE ✕</button>
 </dialog>
+<script defer src="assets/resume/viewer/viewer.js"></script>
 <script>
 (() => {
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
-  /* 3D 查看器：滚到附近才下载 three.js 和模型 */
+  /* 查看器脚本已在页面里用静态 defer 引入（动态注入在线上偶发不执行）。
+     这里只负责：滚到附近时告诉查看器可以开始取模型了 */
   $$('[data-model]').forEach(box => {
-    const st = $('.v3d-status', box);
     const lo = new IntersectionObserver(es => {
       if (!es[0].isIntersecting) return;
       lo.disconnect();
-      const sc = document.createElement('script');
-      sc.src = box.dataset.js;
-      sc.onerror = () => { box.classList.add('is-fail'); if (st) st.textContent = '3D 预览没加载出来，请看上面的照片'; };
-      document.head.appendChild(sc);
-    }, { rootMargin: '700px 0px' });
+      window.dispatchEvent(new CustomEvent('v3d:need', { detail: box }));
+    }, { rootMargin: '400px 0px' });
     lo.observe(box);
   });
 
