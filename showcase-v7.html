@@ -576,6 +576,43 @@ body { font-size: var(--body); }
   .nav-links { margin-left: 0; width: 100%; justify-content: space-between; gap: 0; font-size: 12.5px; letter-spacing: 0; }
 }
 
+/* 3D 查看器 */
+.v3d { position: relative; overflow: hidden; height: clamp(460px, 50vw, 680px); background: radial-gradient(ellipse 60% 70% at 50% 42%, #232321 0%, #151514 58%, #0e0e0d 100%); border: 1px solid var(--line); }
+.v3d-poster, .v3d-stage { position: absolute; inset: 0; width: 100%; height: 100%; }
+.v3d-poster { object-fit: contain; transition: opacity .6s var(--ease); }
+.v3d-stage { opacity: 0; transition: opacity .6s var(--ease); cursor: grab; }
+.v3d-stage:active { cursor: grabbing; }
+.v3d-stage canvas { display: block; width: 100%; height: 100%; outline: none; }
+.v3d.is-ready .v3d-stage { opacity: 1; }
+.v3d.is-ready .v3d-poster { opacity: 0; pointer-events: none; }
+.v3d-status { position: absolute; left: 0; right: 0; bottom: 22px; text-align: center; font-size: 12px; color: var(--dim); letter-spacing: .06em; pointer-events: none; }
+.v3d.is-ready .v3d-status:empty { display: none; }
+.v3d-hint { position: absolute; left: 16px; bottom: 14px; display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--dim); pointer-events: none; opacity: 0; transition: opacity .6s var(--ease) .4s; }
+.v3d.is-ready .v3d-hint { opacity: 1; }
+.v3d-hint i { width: 34px; height: 1px; background: var(--accent); position: relative; }
+.v3d-hint i::before, .v3d-hint i::after { content: ""; position: absolute; top: -3px; width: 6px; height: 6px; border-top: 1px solid var(--accent); }
+.v3d-hint i::before { left: 0; border-left: 1px solid var(--accent); transform: rotate(-45deg); transform-origin: left top; }
+.v3d-hint i::after { right: 0; border-right: 1px solid var(--accent); transform: rotate(45deg); transform-origin: right top; }
+.v3d-ui { position: absolute; right: 12px; bottom: 10px; display: flex; gap: 6px; opacity: 0; transition: opacity .6s var(--ease) .4s; }
+.v3d.is-ready .v3d-ui { opacity: 1; }
+.v3d-ui button { font: inherit; font-size: 12px; color: var(--fg); background: rgba(255,255,255,.06); border: 1px solid var(--line); padding: 9px 14px; min-height: 40px; cursor: pointer; transition: background .25s, border-color .25s; }
+.v3d-ui button:hover { background: rgba(255,255,255,.12); border-color: var(--accent); }
+.v3d.is-fail .v3d-hint, .v3d.is-fail .v3d-ui { display: none; }
+@media (max-width: 560px) {
+  .v3d { height: 128vw; max-height: 580px; }
+  .v3d-poster, .v3d-stage { bottom: 60px; height: auto; }
+  .v3d-hint { top: 14px; bottom: auto; left: 14px; right: auto; justify-content: flex-start; }
+  .v3d-status { bottom: 80px; }
+  .v3d-ui { left: 12px; right: 12px; bottom: 10px; justify-content: stretch; }
+  .v3d-ui button { flex: 1; }
+}
+
+/* 3D 预览收小：不占满整行，高度控制在一屏的 60% 以内 */
+.v3d-fig { max-width: 520px; }
+.v3d { height: clamp(380px, 38vw, 520px); }
+@media (max-width: 860px) { .v3d-fig { max-width: 440px; } }
+@media (max-width: 560px) { .v3d-fig { max-width: none; } .v3d { height: 116vw; max-height: 520px; } }
+
 </style>
 </head>
 <body>
@@ -708,6 +745,9 @@ body { font-size: var(--body); }
     <div class="blk" style="margin-top:clamp(56px,7vw,96px)"><div class="k rise"><span class="lab">「在身上生长」这一件</span></div>
       <div class="v"><div class="row"><figure class="fig rise" style="--w:768;--h:1376"><button class="m" data-view data-kind="image" data-src="assets/resume/as-ref.jpg" data-title="参考图" data-desc="给它的参考图。"><img src="assets/resume/as-ref.jpg" alt="参考图" loading="lazy" decoding="async"></button><figcaption><b>给它一张参考图</b><span>我</span></figcaption></figure><figure class="fig rise" style="--w:2248;--h:1184"><button class="m" data-view data-kind="image" data-src="assets/resume/as-sheet.jpg" data-title="一批 30 张" data-desc="它按参考图出的一批 30 张，蓝框是挑中的那张。"><img src="assets/resume/as-sheet.jpg" alt="一批 30 张" loading="lazy" decoding="async"></button><figcaption><b>它出一批 30 张</b><span>它</span></figcaption></figure><figure class="fig rise" style="--w:765;--h:1360"><button class="m" data-view data-kind="image" data-src="assets/resume/print-bloom-render.jpg" data-title="挑中的一张" data-desc="从 30 张里挑中的这一张，后来打印成了实物。"><img src="assets/resume/print-bloom-render.jpg" alt="挑中的一张" loading="lazy" decoding="async"></button><figcaption><b>挑一张</b><span>我</span></figcaption></figure></div></div></div>
 
+    <div class="blk" style="margin-top:clamp(40px,5vw,64px)"><div class="k rise"><span class="lab">转着看</span></div>
+      <div class="v"><figure class="fig rise v3d-fig"><div class="v3d" data-model="assets/resume/viewer/bloom.glb" data-js="assets/resume/viewer/viewer.js" data-fallback="assets/resume/viewer/bloom.glb.js"><img class="v3d-poster" src="assets/resume/viewer/bloom-poster.webp" alt="「在身上生长」3D 模型预览" decoding="async"><div class="v3d-stage" aria-label="3D 模型，可拖动旋转"></div><div class="v3d-status">加载中</div><div class="v3d-hint"><i></i>左右拖动，转着看</div><div class="v3d-ui"><button type="button" data-act="zoom">看细节</button><button type="button" data-act="reset">复位</button></div></div><figcaption><b>「在身上生长」3D 模型</b><span>约 2 万面 · 1.2 MB</span></figcaption></figure></div></div>
+
     <div class="blk" style="margin-top:clamp(40px,5vw,64px)"><div class="k rise"><span class="lab">打出来的</span></div>
       <div class="v"><div class="frames" style="--n:4"><figure class="fig rise"><button class="frame" data-view data-kind="image" data-src="assets/resume/print-bloom-a.jpg" data-title="在身上生长" data-desc="上面挑中的那张打印出来的实物。家里随手拍的，正式照片还在准备。"><img src="assets/resume/print-bloom-a.jpg" alt="在身上生长" loading="lazy" decoding="async"></button><figcaption><b>在身上生长</b><span>上面那张</span></figcaption></figure><figure class="fig rise"><button class="frame" data-view data-kind="image" data-src="assets/resume/print-bloom-b.jpg" data-title="折叠的人" data-desc="上半身向前折下去，头垂在两腿之间。"><img src="assets/resume/print-bloom-b.jpg" alt="折叠的人" loading="lazy" decoding="async"></button><figcaption><b>折叠的人</b><span>3D 打印</span></figcaption></figure><figure class="fig rise"><button class="frame" data-view data-kind="image" data-src="assets/resume/print-group.jpg" data-title="纠缠的群像" data-desc="几个人纠缠在一起，构图来自古典群雕。"><img src="assets/resume/print-group.jpg" alt="纠缠的群像" loading="lazy" decoding="async"></button><figcaption><b>纠缠的群像</b><span>3D 打印</span></figcaption></figure><figure class="fig rise"><button class="frame" data-view data-kind="image" data-src="assets/resume/vase-hand.jpg" data-title="另一只花瓶" data-desc="同一个花瓶换了配色再打一只，插红色康乃馨。"><img src="assets/resume/vase-hand.jpg" alt="另一只花瓶" loading="lazy" decoding="async"></button><figcaption><b>另一只花瓶</b><span>3D 打印</span></figcaption></figure></div></div></div>
   </div>
@@ -760,6 +800,20 @@ body { font-size: var(--body); }
 (() => {
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+  /* 3D 查看器：滚到附近才下载 three.js 和模型 */
+  $$('[data-model]').forEach(box => {
+    const st = $('.v3d-status', box);
+    const lo = new IntersectionObserver(es => {
+      if (!es[0].isIntersecting) return;
+      lo.disconnect();
+      const sc = document.createElement('script');
+      sc.src = box.dataset.js;
+      sc.onerror = () => { box.classList.add('is-fail'); if (st) st.textContent = '3D 预览没加载出来，请看上面的照片'; };
+      document.head.appendChild(sc);
+    }, { rootMargin: '700px 0px' });
+    lo.observe(box);
+  });
 
   /* 图片淡入（加载完成后） */
   $$('.m img, .frame img').forEach(img => {
